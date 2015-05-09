@@ -1,4 +1,4 @@
-# UBUNTU下安装nginx+php
+# UBUNTU下安装nginx+php+mysql
 
 ## nginx
 
@@ -142,11 +142,66 @@ php5-redis支持
 sudo apt-get install php5-redis -y
 ```
 
-## 重启服务并测试
+## mysql 
+sudo apt-get install mysql-server-5.6 -y
+
+sudo sed -i 's#bind-address#\#bind-address#' /etc/mysql/my.cnf
+
+sudo vim /etc/mysql/conf.d/my-ext.cnf
 ```shell
-/etc/init.d/php-fastcgi restart
-nginx -s reload
+[mysqld]
+#* base setting
+skip-name-resolve
+max_connections         = 1024 #8192
+explicit_defaults_for_timestamp = TRUE
+datadir                 = /var/lib/mysql
+
+key_buffer              = 64
+myisam_sort_buffer_size = 8M #64M
+concurrent_insert       = 2
+delayed_insert_timeout  = 300
+query_cache_limit       = 1M
+query_cache_size        = 16M
+table_open_cache        = 65536
+
+# * log and slow queries
+log_error               = /var/log/mysql/error.log
+slow-query-log          = 1
+slow-query-log-file     = /var/log/mysql/mysql-slow.log
+long_query_time         = 1
+
+
+# * binlog
+server-id               = 1
+log_bin                 = /var/log/mysql/mysql-bin.log
+binlog_cache_size       = 32K
+max_binlog_cache_size   = 512M #2G
+expire_logs_days        = 10
+max_binlog_size         = 512M
+#binlog_do_db           = include_database_name
+#binlog_ignore_db       = include_database_name
+
+
+# * Security Features
+safe-user-create
+local-infile            = 0
+
+
+# * Innodb
+innodb_file_per_table
+innodb_buffer_pool_size         = 128M #1G
+innodb_buffer_pool_instances    = 2 #8
+innodb_log_files_in_group       = 4
+innodb_log_file_size            = 1G
+innodb_log_buffer_size          = 8M #64M
+innodb_flush_log_at_trx_commit  = 1
 ```
 
+重启服务并测试
+```shell
+/etc/init.d/php-fastcgi restart
+/etc/init.d/mysql restart
+nginx -s reload
+```
 
 

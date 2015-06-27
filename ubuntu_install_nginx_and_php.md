@@ -125,6 +125,7 @@ sudo sed -i 's#upload_max_filesize = 2M#upload_max_filesize = 100M#' /etc/php5/c
 sudo sed -i 's#max_execution_time = 30#max_execution_time = 120#' /etc/php5/cgi/php.ini
 sudo sed -i 's#;short_open_tag = Off#short_open_tag = On#' /etc/php5/cgi/php.ini
 sudo sed -i 's#short_open_tag = Off#short_open_tag = On#' /etc/php5/cgi/php.ini
+sudo sed -i 's#session.gc_probability = 0#session.gc_probability = 1#' /etc/php5/cgi/php.ini
 ```
 
 ## 按需求安装相关PHP组件
